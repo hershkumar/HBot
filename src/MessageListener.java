@@ -41,7 +41,7 @@ public class MessageListener extends ListenerAdapter{
 		channel.sendMessage(message).queue();
 	}
 	//rewriting the pm sender
-	public void sendPrivateMessage(User user, String content)
+	public static void sendPrivateMessage(User user, String content)
 	{
 		user.openPrivateChannel().queue( (channel) -> channel.sendMessage(content).queue() );
 	}
@@ -64,7 +64,12 @@ public class MessageListener extends ListenerAdapter{
 			{
 				//Help screen, listing all commands and their usages
 				if (event.getMessage().getContentRaw().equalsIgnoreCase(".help")) {
-					sendPrivateMessage(event.getAuthor(),"This will probably do something one day.");
+					//sendPrivateMessage(event.getAuthor(),"This will probably do something one day.");
+					try {
+						sendHelp(event.getAuthor());
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
 				}
 				if (event.getMessage().getContentRaw().equalsIgnoreCase(".server")) {
 					//no arguments settings
@@ -95,6 +100,15 @@ public class MessageListener extends ListenerAdapter{
 				}
 			}
 		}
+	}
+	private static void sendHelp(User author) throws FileNotFoundException {
+		File help = new File("./help.txt");
+		Scanner helpReader = new Scanner(help);
+		String out = "";
+		while (helpReader.hasNextLine()) {
+			out += helpReader.nextLine();
+		}
+		sendPrivateMessage(author,out);
 	}
 
 
