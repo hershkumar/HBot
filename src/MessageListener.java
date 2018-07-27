@@ -1,36 +1,26 @@
-import net.dv8tion.jda.core.hooks.*;
-import net.dv8tion.jda.core.utils.IOUtil;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.security.auth.login.LoginException;
 
-import net.dv8tion.jda.core.*;
-import net.dv8tion.jda.core.entities.Channel;
+import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.*;
-import net.dv8tion.jda.core.EmbedBuilder;
-import java.awt.Color;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import query.*;
 public class MessageListener extends ListenerAdapter{
 	String defaultServer = null;
 	int defaultPort = 0;
-	final static String VERSION = "1.0.1";
+	final static String VERSION = "1.0.2";
 	public static void main(String[] args ) throws LoginException, InterruptedException, FileNotFoundException {
 
 		String token = null;
@@ -130,7 +120,25 @@ public class MessageListener extends ListenerAdapter{
 					}
 					HsendMessage(event.getChannel(),status);
 				}
-
+				
+				if (message.length() >= 12 && message.subSequence(0, 11).equals(".getPlayers")) {
+					String msg = message.substring(12);
+					String ip = msg.substring(0,msg.indexOf(" "));
+					String portString = msg.substring(msg.indexOf(" ") + 1);
+					int port = Integer.parseInt(portString);
+					int numPlayers = getPlayers(ip,port);
+					String players = Integer.toString(numPlayers);
+					HsendMessage(channel, players);
+					HsendMessage(channel, getNames(ip,port));
+				} 
+				if(message.equals(".getPlayers")) {
+					String ip = defaultServer;
+					int port = defaultPort;
+					int numPlayers = getPlayers(ip,port);
+					String players = Integer.toString(numPlayers);
+					HsendMessage(channel, players);
+					HsendMessage(channel, getNames(ip,port));
+				}
 
 			}
 		}
@@ -161,9 +169,24 @@ public class MessageListener extends ListenerAdapter{
 		eb.setDescription(out);
 		channel.sendMessage(eb.build()).queue();
 	}
-	private void sendError() {
 
+	private int getPlayers(String ip,int port) {
+		MCQuery query = new MCQuery(ip,port);
+		QueryResponse resp = query.basicStat();
+		int players = resp.getOnlinePlayers();
+		System.out.println("giving player list");
+		return players;
 	}
-
+	private String getNames(String ip, int port) {
+		MCQuery query = new MCQuery(ip,port);
+		QueryResponse resp = query.fullStat();
+		List players = resp.getPlayerList();
+		String ret = "";
+		for (int i= 0; i < players.size(); i++) {
+			ret += players.get(i) + ", ";
+		}
+		System.out.println("giving player name list");
+		return ret;
+	}
 
 }
