@@ -1,1 +1,19 @@
-help meeee
+HBot Version 1.0.0 Help
+#- - - - - - - - - - - -#
+HBot is a bot that can be used to check whether or not a game server is up.
+#- - - - - - - - - - - -#
+Commands:
+`.help`
+Sends this message to you in PMs.
+~~
+`.server`
+Checks whether a server is up via opening a port.
+Usage:
+`.server` checks the default set server and port combination
+`.server <IP address or domain> <port>` will check the given ip for whether or not the port is open.
+~~
+`.setDefualtServer`
+Sets the default server for the `.server` command
+Usage:
+`.setDefaultServer <IP address or domain>`
+~~
