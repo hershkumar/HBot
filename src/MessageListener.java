@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -24,7 +25,8 @@ import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.*;
-
+import net.dv8tion.jda.core.EmbedBuilder;
+import java.awt.Color;
 public class MessageListener extends ListenerAdapter{
 	public static void main(String[] args ) throws LoginException, InterruptedException, FileNotFoundException {
 		final String VERSION = "1.0.0";
@@ -34,9 +36,10 @@ public class MessageListener extends ListenerAdapter{
 		JDA api = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
 		api.addEventListener(new MessageListener());
 		api.getPresence().setGame(Game.playing(VERSION));
+
 	}
 	//rewriting the message sender
-	public void sendMessage(MessageChannel channel, String message) 
+	public static void HsendMessage(MessageChannel channel, String message) 
 	{
 		channel.sendMessage(message).queue();
 	}
@@ -58,7 +61,7 @@ public class MessageListener extends ListenerAdapter{
 			if (event.isFromType(ChannelType.PRIVATE)) {
 				System.out.printf("[PM] %s: %s\n", event.getAuthor().getName(), event.getMessage().getContentDisplay());
 				MessageChannel channel = event.getChannel();
-				sendMessage(channel, "hey there " + event.getAuthor());
+				HsendMessage(channel, "hey there " + event.getAuthor());
 			}
 			else 
 			{
@@ -66,7 +69,7 @@ public class MessageListener extends ListenerAdapter{
 				if (event.getMessage().getContentRaw().equalsIgnoreCase(".help")) {
 					//sendPrivateMessage(event.getAuthor(),"This will probably do something one day.");
 					try {
-						sendHelp(event.getAuthor());
+						sendHelp(event.getChannel(),event.getAuthor());
 					} catch (FileNotFoundException e) {
 						e.printStackTrace();
 					}
@@ -82,7 +85,7 @@ public class MessageListener extends ListenerAdapter{
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					sendMessage(event.getChannel(),status);
+					HsendMessage(event.getChannel(),status);
 				}
 
 				if (event.getMessage().getContentRaw().contains(".server") && event.getMessage().getContentRaw().length() > 7) {
@@ -93,7 +96,7 @@ public class MessageListener extends ListenerAdapter{
 					int port = Integer.parseInt(portString);
 					try {
 						String status = ServerPinger.checkServer(ip,port);
-						sendMessage(event.getChannel(),status);
+						HsendMessage(event.getChannel(),status);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -101,14 +104,38 @@ public class MessageListener extends ListenerAdapter{
 			}
 		}
 	}
-	private static void sendHelp(User author) throws FileNotFoundException {
-		File help = new File("./help.txt");
-		Scanner helpReader = new Scanner(help);
-		String out = "";
-		while (helpReader.hasNextLine()) {
-			out += helpReader.nextLine();
-		}
-		sendPrivateMessage(author,out);
+	private static void sendHelp(MessageChannel channel,User author) throws FileNotFoundException {
+		EmbedBuilder eb = new EmbedBuilder();
+		
+		
+		
+		String out ="\n" + 
+				"HBot Version 1.0.0 Help \n" + 
+				"#- - - - - - - - - - - -# \n" + 
+				"HBot is a bot that can be used to check whether or not a game server is up. \n" + 
+				"#- - - - - - - - - - - -# \n" + 
+				"Commands: \n" + 
+				"`.help`  \n" + 
+				"Sends this message to you in PMs.\n" + 
+				"--\n" + 
+				"`.server`\n" + 
+				"Checks whether a server is up via opening a port.\n" + 
+				"Usage:\n" + 
+				"`.server` checks the default set server and port combination\n" + 
+				"`.server <IP address or domain> <port>` will check the given ip for whether or not the port is open.\n" + 
+				"--\n" + 
+				"`.setDefaultServer`\n" + 
+				"Sets the default server for the `.server` command\n" + 
+				"Usage:\n" + 
+				"`.setDefaultServer <IP address or domain>`\n" + 
+				"--\n" + 
+				"";
+		
+		eb.setDescription(out);
+		channel.sendMessage(eb.build()).queue();
+
+		//channel.sendMessage(out).queue();
+
 	}
 
 
