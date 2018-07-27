@@ -28,9 +28,13 @@ import net.dv8tion.jda.core.events.message.*;
 import net.dv8tion.jda.core.EmbedBuilder;
 import java.awt.Color;
 public class MessageListener extends ListenerAdapter{
+	String defaultServer = null;
+	int defaultPort = 0;
+	final static String VERSION = "1.0.1";
 	public static void main(String[] args ) throws LoginException, InterruptedException, FileNotFoundException {
-		final String VERSION = "1.0.0";
+
 		String token = null;
+
 		if (args.length != 0) {
 			token = args[0];
 		}
@@ -72,50 +76,67 @@ public class MessageListener extends ListenerAdapter{
 			}
 			else 
 			{
+
+				String message = event.getMessage().getContentRaw();
+				MessageChannel channel = event.getTextChannel();
+				if (event.getMessage().getContentRaw().contains(".server") && event.getMessage().getContentRaw().length() > 7) {
+					try {
+						String ip = message.substring(8);
+						String portString = ip.substring(ip.indexOf(" ") +1);
+						ip = ip.substring(0, ip.indexOf(" "));
+						int port = Integer.parseInt(portString);
+						System.out.println("trying server " + ip +" on port " + port);
+						String status = ServerPinger.checkServer(ip,port);
+						HsendMessage(event.getChannel(),status);
+					}
+					catch (IOException e) {
+						System.out.println("Stop trying to mess with me >-:(");
+					}
+				}
 				//Help screen, listing all commands and their usages
 				if (event.getMessage().getContentRaw().equalsIgnoreCase(".help")) {
 					//sendPrivateMessage(event.getAuthor(),"This will probably do something one day.");
 					try {
 						sendHelp(event.getChannel(),event.getAuthor());
 					} catch (FileNotFoundException e) {
-						e.printStackTrace();
+						System.out.println("You dun goofed");
 					}
 				}
+				if (message.length() >= 17 && message.subSequence(0, 17).equals(".setDefaultServer")) {
+					String msg = event.getMessage().getContentRaw();
+					msg = msg.substring(18);
+					String ip = msg;
+					defaultServer = ip;
+					System.out.println("Default server set to " + defaultServer);
+				}
+				if (message.length() >= 15 && message.subSequence(0,15).equals(".setDefaultPort")) {
+					String port = message.substring(16);
+					defaultPort = Integer.parseInt(port);
+					System.out.println("Default port set to " + defaultPort);
+				}
+
+
 				if (event.getMessage().getContentRaw().equalsIgnoreCase(".server")) {
+
 					//no arguments settings
-					String ip = "hershcraft.ddns.net";
-					int port = 25565;
+					String ip = defaultServer;
+					int port = defaultPort;
 
 					String status = "something happened";
 					try {
 						status = ServerPinger.checkServer(ip,port);
 					} catch (IOException e) {
-						e.printStackTrace();
+						HsendMessage(channel,"Server Port Out of Bounds");
 					}
 					HsendMessage(event.getChannel(),status);
 				}
 
-				if (event.getMessage().getContentRaw().contains(".server") && event.getMessage().getContentRaw().length() > 7) {
-					String message = event.getMessage().getContentRaw();
-					String ip = message.substring(8);
-					String portString = ip.substring(ip.indexOf(" ") +1);
-					ip = ip.substring(0, ip.indexOf(" "));
-					int port = Integer.parseInt(portString);
-					try {
-						String status = ServerPinger.checkServer(ip,port);
-						HsendMessage(event.getChannel(),status);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
+
 			}
 		}
 	}
 	private static void sendHelp(MessageChannel channel,User author) throws FileNotFoundException {
 		EmbedBuilder eb = new EmbedBuilder();
-
-
-
 		String out ="\n" + 
 				"HBot Version 1.0.0 Help \n" + 
 				"#- - - - - - - - - - - -# \n" + 
@@ -137,11 +158,10 @@ public class MessageListener extends ListenerAdapter{
 				"`.setDefaultServer <IP address or domain>`\n" + 
 				"--\n" + 
 				"";
-
 		eb.setDescription(out);
 		channel.sendMessage(eb.build()).queue();
-
-		//channel.sendMessage(out).queue();
+	}
+	private void sendError() {
 
 	}
 
