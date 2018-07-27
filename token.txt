@@ -1,2 +1,0 @@
-true
-TOKEN_GOES_HERE

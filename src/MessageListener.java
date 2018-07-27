@@ -30,21 +30,17 @@ import java.awt.Color;
 public class MessageListener extends ListenerAdapter{
 	public static void main(String[] args ) throws LoginException, InterruptedException, FileNotFoundException {
 		final String VERSION = "1.0.0";
-		Scanner tokenReader = new Scanner(new File("./token.txt"));
-		JDA api = null;
-		
-		if (tokenReader.nextLine().equals("true")) {
-			String token = tokenReader.nextLine();
-			api = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
-			api.addEventListener(new MessageListener());
+		String token = null;
+		if (args.length != 0) {
+			token = args[0];
 		}
 		else {
 			File config = new File("./config.txt");
 			Scanner reader = new Scanner(config);
-			String token = reader.nextLine();
-			api = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
-			api.addEventListener(new MessageListener());
+			token = reader.nextLine();
 		}
+		JDA api = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
+		api.addEventListener(new MessageListener());
 		api.getPresence().setGame(Game.playing(VERSION));
 
 
