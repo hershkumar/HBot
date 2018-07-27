@@ -27,12 +27,13 @@ import net.dv8tion.jda.core.events.message.*;
 
 public class MessageListener extends ListenerAdapter{
 	public static void main(String[] args ) throws LoginException, InterruptedException, FileNotFoundException {
+		final String VERSION = "1.0.0";
 		File config = new File("./config.txt");
 		Scanner reader = new Scanner(config);
 		String token = reader.nextLine();
 		JDA api = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
 		api.addEventListener(new MessageListener());
-		api.getPresence().setGame(Game.playing("v1.0.1"));
+		api.getPresence().setGame(Game.playing(VERSION));
 	}
 	//rewriting the message sender
 	public void sendMessage(MessageChannel channel, String message) 
