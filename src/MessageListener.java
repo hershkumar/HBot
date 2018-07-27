@@ -30,12 +30,23 @@ import java.awt.Color;
 public class MessageListener extends ListenerAdapter{
 	public static void main(String[] args ) throws LoginException, InterruptedException, FileNotFoundException {
 		final String VERSION = "1.0.0";
-		File config = new File("./config.txt");
-		Scanner reader = new Scanner(config);
-		String token = reader.nextLine();
-		JDA api = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
-		api.addEventListener(new MessageListener());
+		Scanner tokenReader = new Scanner(new File("./token.txt"));
+		JDA api = null;
+		
+		if (tokenReader.nextLine().equals("true")) {
+			String token = tokenReader.nextLine();
+			api = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
+			api.addEventListener(new MessageListener());
+		}
+		else {
+			File config = new File("./config.txt");
+			Scanner reader = new Scanner(config);
+			String token = reader.nextLine();
+			api = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
+			api.addEventListener(new MessageListener());
+		}
 		api.getPresence().setGame(Game.playing(VERSION));
+
 
 	}
 	//rewriting the message sender
@@ -106,9 +117,9 @@ public class MessageListener extends ListenerAdapter{
 	}
 	private static void sendHelp(MessageChannel channel,User author) throws FileNotFoundException {
 		EmbedBuilder eb = new EmbedBuilder();
-		
-		
-		
+
+
+
 		String out ="\n" + 
 				"HBot Version 1.0.0 Help \n" + 
 				"#- - - - - - - - - - - -# \n" + 
@@ -130,7 +141,7 @@ public class MessageListener extends ListenerAdapter{
 				"`.setDefaultServer <IP address or domain>`\n" + 
 				"--\n" + 
 				"";
-		
+
 		eb.setDescription(out);
 		channel.sendMessage(eb.build()).queue();
 
