@@ -13,6 +13,7 @@ public class ServerPinger {
 			pingSocket = new Socket(serverName, port);
 			out = new PrintWriter(pingSocket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(pingSocket.getInputStream()));
+			System.out.println("Pinging server " + serverName + " at port " + port);
 		} catch (IOException e) {
 			return "The server is down ;(";
 		}

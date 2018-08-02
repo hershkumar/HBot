@@ -1,4 +1,4 @@
-import java.io.File;
+    import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
@@ -20,7 +20,8 @@ import query.*;
 public class MessageListener extends ListenerAdapter{
 	String defaultServer = null;
 	int defaultPort = 0;
-	final static String VERSION = "1.0.2";
+	MessageChannel defaultChannel;
+	final static String VERSION = "1.0.3";
 	public static void main(String[] args ) throws LoginException, InterruptedException, FileNotFoundException {
 
 		String token = null;
@@ -85,7 +86,6 @@ public class MessageListener extends ListenerAdapter{
 				}
 				//Help screen, listing all commands and their usages
 				if (event.getMessage().getContentRaw().equalsIgnoreCase(".help")) {
-					//sendPrivateMessage(event.getAuthor(),"This will probably do something one day.");
 					try {
 						sendHelp(event.getChannel(),event.getAuthor());
 					} catch (FileNotFoundException e) {
@@ -120,7 +120,7 @@ public class MessageListener extends ListenerAdapter{
 					}
 					HsendMessage(event.getChannel(),status);
 				}
-				
+
 				if (message.length() >= 12 && message.subSequence(0, 11).equals(".getPlayers")) {
 					String msg = message.substring(12);
 					String ip = msg.substring(0,msg.indexOf(" "));
