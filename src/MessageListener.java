@@ -21,6 +21,7 @@ public class MessageListener extends ListenerAdapter{
 	String defaultServer = null;
 	int defaultPort = 0;
 	MessageChannel defaultChannel;
+	String prefix = ".";
 	final static String VERSION = "1.0.3";
 	public static void main(String[] args ) throws LoginException, InterruptedException, FileNotFoundException {
 
@@ -70,7 +71,7 @@ public class MessageListener extends ListenerAdapter{
 
 				String message = event.getMessage().getContentRaw();
 				MessageChannel channel = event.getTextChannel();
-				if (event.getMessage().getContentRaw().contains(".server") && event.getMessage().getContentRaw().length() > 7) {
+				if (event.getMessage().getContentRaw().contains(prefix +"server") && event.getMessage().getContentRaw().length() > 7) {
 					try {
 						String ip = message.substring(8);
 						String portString = ip.substring(ip.indexOf(" ") +1);
@@ -86,15 +87,15 @@ public class MessageListener extends ListenerAdapter{
 				}
 				
 				//Help screen, listing all commands and their usages
-				if (event.getMessage().getContentRaw().equalsIgnoreCase(".help")) {
+				if (event.getMessage().getContentRaw().equalsIgnoreCase(prefix +"help")) {
 					try {
 						Help.sendHelp(event.getChannel(),event.getAuthor());
-					} catch (FileNotFoundException e) {
+					} catch (IOException e) {
 						System.out.println("You dun goofed");
 					}
 				}
 				
-				if (message.length() >= 17 && message.subSequence(0, 17).equals(".setDefaultServer")) {
+				if (message.length() >= 17 && message.subSequence(0, 17).equals(prefix +"setDefaultServer")) {
 					String msg = event.getMessage().getContentRaw();
 					msg = msg.substring(18);
 					String ip = msg;
@@ -102,14 +103,14 @@ public class MessageListener extends ListenerAdapter{
 					System.out.println("Default server set to " + defaultServer);
 				}
 				
-				if (message.length() >= 15 && message.subSequence(0,15).equals(".setDefaultPort")) {
+				if (message.length() >= 15 && message.subSequence(0,15).equals(prefix +"setDefaultPort")) {
 					String port = message.substring(16);
 					defaultPort = Integer.parseInt(port);
 					System.out.println("Default port set to " + defaultPort);
 				}
 
 
-				if (event.getMessage().getContentRaw().equalsIgnoreCase(".server")) {
+				if (event.getMessage().getContentRaw().equalsIgnoreCase(prefix + "server")) {
 
 					//no arguments settings
 					String ip = defaultServer;
@@ -124,7 +125,7 @@ public class MessageListener extends ListenerAdapter{
 					HsendMessage(event.getChannel(),status);
 				}
 
-				if (message.length() >= 12 && message.subSequence(0, 11).equals(".getPlayers")) {
+				if (message.length() >= 12 && message.subSequence(0, 11).equals(prefix + "getPlayers")) {
 					String msg = message.substring(12);
 					String ip = msg.substring(0,msg.indexOf(" "));
 					String portString = msg.substring(msg.indexOf(" ") + 1);
@@ -134,7 +135,7 @@ public class MessageListener extends ListenerAdapter{
 					HsendMessage(channel, players);
 					HsendMessage(channel, getNames(ip,port));
 				} 
-				if(message.equals(".getPlayers")) {
+				if(message.equals(prefix + "getPlayers")) {
 					String ip = defaultServer;
 					int port = defaultPort;
 					int numPlayers = getPlayers(ip,port);
@@ -143,6 +144,18 @@ public class MessageListener extends ListenerAdapter{
 					HsendMessage(channel, getNames(ip,port));
 				}
 
+				if (message.length() >= 11 &&message.subSequence(prefix.length()-1, 10).equals(prefix + "setPrefix")) {
+					String prefixNew = message.substring(10 + prefix.length());
+					
+					if (prefixNew.length()==1) {
+						prefix = prefixNew;
+						System.out.println("set prefix to "+ prefix);
+					}
+				}
+				
+				if (message.equals("prefix?")) {
+					HsendMessage(channel,prefix);
+				}
 			}
 		}
 	}

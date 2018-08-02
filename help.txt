@@ -1,0 +1,25 @@
+HBot v1.0.3 Commmand Help
+**Commands:**
+**All commands are case sensitive**
+--
+`.server`:
+pings the default server at the default port. Returns whether or not the server is up or down.
+--
+`.setDefaultServer`:
+Sets the default server or ip address for the `.server` command.
+--
+`.setDefaultPort`:
+sets the default port number for the `.server` command.
+--
+`.server <ip address> <port number>`:
+pings the server that is running at the ip address and port. Returns whether or not it is down or up.
+--
+`.changelog`:
+returns the changelog for this release of HBot.
+--
+`.setPrefix <prefix>`:
+sets the prefix for HBot.
+--
+`prefix?`:
+returns the prefix of HBot.
+--
