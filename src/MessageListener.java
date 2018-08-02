@@ -84,14 +84,16 @@ public class MessageListener extends ListenerAdapter{
 						System.out.println("Stop trying to mess with me >-:(");
 					}
 				}
+				
 				//Help screen, listing all commands and their usages
 				if (event.getMessage().getContentRaw().equalsIgnoreCase(".help")) {
 					try {
-						sendHelp(event.getChannel(),event.getAuthor());
+						Help.sendHelp(event.getChannel(),event.getAuthor());
 					} catch (FileNotFoundException e) {
 						System.out.println("You dun goofed");
 					}
 				}
+				
 				if (message.length() >= 17 && message.subSequence(0, 17).equals(".setDefaultServer")) {
 					String msg = event.getMessage().getContentRaw();
 					msg = msg.substring(18);
@@ -99,6 +101,7 @@ public class MessageListener extends ListenerAdapter{
 					defaultServer = ip;
 					System.out.println("Default server set to " + defaultServer);
 				}
+				
 				if (message.length() >= 15 && message.subSequence(0,15).equals(".setDefaultPort")) {
 					String port = message.substring(16);
 					defaultPort = Integer.parseInt(port);
@@ -143,32 +146,7 @@ public class MessageListener extends ListenerAdapter{
 			}
 		}
 	}
-	private static void sendHelp(MessageChannel channel,User author) throws FileNotFoundException {
-		EmbedBuilder eb = new EmbedBuilder();
-		String out ="\n" + 
-				"HBot Version 1.0.0 Help \n" + 
-				"#- - - - - - - - - - - -# \n" + 
-				"HBot is a bot that can be used to check whether or not a game server is up. \n" + 
-				"#- - - - - - - - - - - -# \n" + 
-				"Commands: \n" + 
-				"`.help`  \n" + 
-				"Sends this message to you in PMs.\n" + 
-				"--\n" + 
-				"`.server`\n" + 
-				"Checks whether a server is up via opening a port.\n" + 
-				"Usage:\n" + 
-				"`.server` checks the default set server and port combination\n" + 
-				"`.server <IP address or domain> <port>` will check the given ip for whether or not the port is open.\n" + 
-				"--\n" + 
-				"`.setDefaultServer`\n" + 
-				"Sets the default server for the `.server` command\n" + 
-				"Usage:\n" + 
-				"`.setDefaultServer <IP address or domain>`\n" + 
-				"--\n" + 
-				"";
-		eb.setDescription(out);
-		channel.sendMessage(eb.build()).queue();
-	}
+	
 
 	private int getPlayers(String ip,int port) {
 		MCQuery query = new MCQuery(ip,port);
