@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/Users/sk/Downloads/JDA-3.7.1_385-withDependencies.jar" sourcepath="/Users/sk/Downloads/JDA-3.7.1_385-sources.jar">
+	<classpathentry kind="lib" path="D:/CS/eclipse-depend/JDA-3.7.1_385-withDependencies.jar" sourcepath="D:/eclipse-depend/JDA-3.7.1_385-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/sk/Downloads/JDA-3.7.1_385-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/D:/CS/eclipse-depend/JDA-3.7.1_385-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>

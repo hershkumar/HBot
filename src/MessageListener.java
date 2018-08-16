@@ -1,4 +1,4 @@
-    import java.io.File;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
@@ -12,7 +12,9 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -20,8 +22,9 @@ import query.*;
 public class MessageListener extends ListenerAdapter{
 	String defaultServer = null;
 	int defaultPort = 0;
-	MessageChannel defaultChannel;
+	static TextChannel defaultChannel;
 	String prefix = ".";
+	static long general = 472193024844365826l;
 	final static String VERSION = "1.0.3";
 	public static void main(String[] args ) throws LoginException, InterruptedException, FileNotFoundException {
 
@@ -37,7 +40,9 @@ public class MessageListener extends ListenerAdapter{
 		}
 		JDA api = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
 		api.addEventListener(new MessageListener());
+		defaultChannel = api.getTextChannelById(general);
 		api.getPresence().setGame(Game.playing(VERSION));
+		HsendMessage((MessageChannel) defaultChannel,"HBot v"+VERSION+" starting up");
 
 
 	}
@@ -85,7 +90,7 @@ public class MessageListener extends ListenerAdapter{
 						System.out.println("Stop trying to mess with me >-:(");
 					}
 				}
-				
+
 				//Help screen, listing all commands and their usages
 				if (event.getMessage().getContentRaw().equalsIgnoreCase(prefix +"help")) {
 					try {
@@ -94,7 +99,7 @@ public class MessageListener extends ListenerAdapter{
 						System.out.println("You dun goofed");
 					}
 				}
-				
+
 				if (message.length() >= 17 && message.subSequence(0, 17).equals(prefix +"setDefaultServer")) {
 					String msg = event.getMessage().getContentRaw();
 					msg = msg.substring(18);
@@ -102,7 +107,7 @@ public class MessageListener extends ListenerAdapter{
 					defaultServer = ip;
 					System.out.println("Default server set to " + defaultServer);
 				}
-				
+
 				if (message.length() >= 15 && message.subSequence(0,15).equals(prefix +"setDefaultPort")) {
 					String port = message.substring(16);
 					defaultPort = Integer.parseInt(port);
@@ -146,20 +151,20 @@ public class MessageListener extends ListenerAdapter{
 
 				if (message.length() >= 11 &&message.subSequence(prefix.length()-1, 10).equals(prefix + "setPrefix")) {
 					String prefixNew = message.substring(10 + prefix.length());
-					
+
 					if (prefixNew.length()==1) {
 						prefix = prefixNew;
 						System.out.println("set prefix to "+ prefix);
 					}
 				}
-				
+
 				if (message.equals("prefix?")) {
 					HsendMessage(channel,prefix);
 				}
 			}
 		}
 	}
-	
+
 
 	private int getPlayers(String ip,int port) {
 		MCQuery query = new MCQuery(ip,port);
